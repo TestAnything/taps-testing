@@ -1,0 +1,54 @@
+//-*-CSharp-*-
+// Copyright 2009 Frank van Dijk
+// This file is part of Taps.
+//
+// Taps is free software: you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// Taps is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+// or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+// License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Taps.  If not, see <http://www.gnu.org/licenses/>.
+//
+// You are granted an "additional permission" (as defined by section 7
+// of the GPL) regarding the use of this software in automated test
+// scripts; see the COPYING.EXCEPTION file for details.
+
+using Taps;
+
+using System;
+using System.IO;
+using System.Text.RegularExpressions;
+
+class TestIs: TAP  {
+
+    static int Main() {
+        Plan(16);
+        Is(1,1);
+        Is(1,1,"a description for Is(1,1)");
+        Is("abc","abc");
+        Is((string)null,(string)null); // 4
+        Is(null,"a");
+        Is("a",null);
+        Is(1,2);
+        Is("b","c");            // 8
+
+        Isnt(1,1);
+        Isnt(1,1,"a description for Isnt(1,1)");
+        Isnt("abc","abc");
+        Isnt((string)null,(string)null);
+        Isnt(null,"a");
+        Isnt("a",null);
+        Isnt(1,2);
+        Isnt("b","c");
+
+        return 0;
+    }
+    
+}
+

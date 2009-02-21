@@ -1,0 +1,54 @@
+//-*-CSharp-*-
+// Copyright 2009 Frank van Dijk
+// This file is part of Taps.
+//
+// Taps is free software: you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// Taps is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+// or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+// License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Taps.  If not, see <http://www.gnu.org/licenses/>.
+//
+// You are granted an "additional permission" (as defined by section 7
+// of the GPL) regarding the use of this software in automated test
+// scripts; see the COPYING.EXCEPTION file for details.
+
+using Taps;
+
+using System;
+using System.IO;
+using System.Text.RegularExpressions;
+
+class TestExcept: TAP  {
+
+    static int Main() {
+        Plan(9);
+        Except(()=>{
+                throw new ApplicationException();},typeof(ApplicationException),"exact type");
+        Except(()=>{
+                throw new ApplicationException();},typeof(SystemException),"wrong type");
+        Except(()=>{
+                throw new ApplicationException();},typeof(Exception));
+        Except(()=>{
+                throw new ApplicationException("OMFSMWTFBBQ");},"OMFSMWTFBBQ","by text");
+        Except(()=>{
+                throw new ApplicationException("OMFSMWTFBBQ");},"OMGWTFBBQ","by text mismatch");
+        Except(()=>{
+                throw new ApplicationException("OMFSMWTFBBQ");},"OMGWTFBBQ");
+        Except(()=>{
+                throw new ApplicationException("OMFSMWTFBBQ");},new Regex(@"[F]SMWTF..Q$"),"by re");
+        Except(()=>{
+                throw new ApplicationException("OMFSMWTFBBQ");},"GWT?BBQ","by re mismatch");
+        Except(()=>{
+                throw new ApplicationException("OMFSMWTFBBQ");},new Regex(@".*"));
+        return 0;
+    }
+    
+}
+

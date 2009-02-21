@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<locatingRules xmlns="http://thaiopensource.com/ns/locating-rules/1.0">
+  <documentElement prefix="" localName="book" typeId="DocBookxi"/>
+  <typeId id="DocBookxi" uri="file:///c:/emacs-22.2/site-lisp/nxml-mode-20041004/schema/docbookxi.rnc"/>
+</locatingRules>

@@ -1,0 +1,25 @@
+Taps is a test tool for the .NET framework. It is inspired on Perl's
+testing facilities and therefore quite different from the likes of
+tools like NUnit. tap.exe runs test scripts and expects to see output
+that conforms to the TAP protocol on their stdouts.
+
+Installation
+------------
+
+You can install Taps using the binary installer. The binary installer
+installs Taps with documentation and samples in ProgramFiles/Taps and
+puts a copy of tap.exe in SystemRoot\System32 so it appears in the
+path. The installer adds an item 'Taps' in the start menu with links
+to the documentation and the uninstaller.
+
+If you want to compile Taps yourself you can do so by running make.pl
+in the tap/tap directory. Compiling Taps requires that the .NET
+framework v3.5 is installed on your system. To compile the
+documentation run make.pl in the tap/doc directory. Compiling the
+documentation requires xsltproc and docbook xsls; see
+docbook.sourceforge.net.
+
+Contact
+-------
+
+Questions ? Bugs ? taps.testing at gmail dot com.

@@ -1,0 +1,46 @@
+//-*-CSharp-*-
+// Copyright 2009 Frank van Dijk
+// This file is part of Taps.
+//
+// Taps is free software: you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// Taps is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+// or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+// License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Taps.  If not, see <http://www.gnu.org/licenses/>.
+//
+// You are granted an "additional permission" (as defined by section 7
+// of the GPL) regarding the use of this software in automated test
+// scripts; see the COPYING.EXCEPTION file for details.
+
+using Taps;
+
+using System;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Diagnostics;
+class TestLike: TAP  {
+
+    static int Main() {
+        Plan(10);
+        Like(1,new Regex(@"^1$"));
+        Like(1,new Regex(@"^1$"),"with name");
+        Like("abc",new Regex(@"b"));
+        Like(11,new Regex(@"^1$"));
+        Like("abc",new Regex(@"^b"),"avec nom");
+        Unlike(1,new Regex(@"^1$"));
+        Unlike(1,new Regex(@"^1$"),"with name");
+        Unlike("abc",new Regex(@"b"));
+        Unlike(11,new Regex(@"^1$"));
+        Unlike("abc",new Regex(@"^b"),"avec nom");
+        return 0;
+    }
+    
+}
+

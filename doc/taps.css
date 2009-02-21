@@ -1,0 +1,13 @@
+
+body {
+    font-family: sans-serif;
+}
+
+li p {
+    margin: 0.5em 0px;
+}
+
+.screen  {
+    background-color: #eeeeee;
+    padding: 0.5em;
+ }
