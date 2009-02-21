@@ -1,0 +1,24 @@
+As a special exception, if you link the tap.exe library that is part
+of this work to a 'test program' that links to a 'subject program',
+tap.exe does not by itself cause the 'test program' or the 'subject
+program' to be covered by the GNU General Public License if and only
+if all of the following conditions are met:
+
+- the 'test program' is intended for automated testing of the 'subject
+  program' only and can be used for that purpose only
+
+- the 'test program' uses no other test framework than that provided by
+  the 'tap.exe' library
+
+- the 'subject program' does not invoke any methods and does
+  not use any data provided by the 'tap.exe' library
+
+- the 'test program' can be run by the 'tap.exe' command line tool and
+  its output can be parsed by the 'tap.exe' command line tool
+
+This exception does not however invalidate any other reasons why the
+document might be covered by the GNU General Public License.
+
+If you modify Taps, you may extend this exception to your version, but
+you are not obligated to do so. If you do not wish to do so, delete
+this exception statement from your version.

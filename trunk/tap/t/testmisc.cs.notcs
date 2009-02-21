@@ -1,0 +1,64 @@
+//-*-CSharp-*-
+// Copyright 2009 Frank van Dijk
+// This file is part of Taps.
+//
+// Taps is free software: you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// Taps is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+// or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+// License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Taps.  If not, see <http://www.gnu.org/licenses/>.
+//
+// You are granted an "additional permission" (as defined by section 7
+// of the GPL) regarding the use of this software in automated test
+// scripts; see the COPYING.EXCEPTION file for details.
+
+using Taps;
+
+using System;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Diagnostics;
+class TestMisc: TAP  {
+
+    static int Main() {
+        Plan(24);
+        Pass("phew");
+        Fail("uh oh");
+        Diag("some {0}","comment");           // this is not a test
+        if(!Ok(true)) Diag("don't see this"); 
+        if(!Ok(false)) Diag("so that went wrong, huh ?"); // 4
+        if(!Is(1,1)) Diag("don't see this");
+        if(!Is(1,2)) Diag("so that went wrong, huh ?");
+        if(!Isnt(1,2)) Diag("don't see this"); 
+        if(!Isnt(1,1)) Diag("so that went wrong, huh ?"); // 8
+        if(!IsDeeply(1,1)) Diag("don't see this");
+        if(!IsDeeply(1,2)) Diag("so that went wrong, huh ?");
+        if(!IsDeeply(new []{1,2,3},new []{1,2,3})) Diag("don't see this");
+        if(!IsDeeply(new []{1,2,3},new []{1,3,2})) Diag("so that went wrong, huh ?"); // 12
+        if(!Like(1,new Regex(@"^1$"))) Diag("don't see this");
+        if(!Like(1,new Regex(@"^11$"))) Diag("so that went wrong, huh ?");
+        if(!Unlike(1,new Regex(@"^11$"))) Diag("don't see this"); 
+        if(!Unlike(1,new Regex(@"^1$"))) Diag("so that went wrong, huh ?"); // 16
+        if(!CmpOk("1",object.Equals,"1")) Diag("don't see this");
+        if(!CmpOk("1",object.Equals,"2")) Diag("so that went wrong, huh ?");
+        if(!Pass("this")) Diag("don't see this"); 
+        if(!Fail("this")) Diag("so that went wrong, huh ?"); // 20
+        if(!Isa(1,typeof(int))) Diag("don't see this");
+        if(!Isa("a",typeof(int))) Diag("so that went wrong, huh ?");
+        if(!Except(()=>{
+                    throw new ApplicationException();},typeof(ApplicationException))) Diag("don't see this");
+        if(!Except(()=>{
+                    throw new ApplicationException();},typeof(SystemException))) Diag("so that went wrong, huh ?");
+        
+        return 0;
+    }
+    
+}
+
