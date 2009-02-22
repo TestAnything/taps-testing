@@ -1068,8 +1068,8 @@ not ok 2
   severity:  fail
   method:    TestException.Crash
   backtrace: |2
-/^       at TestException.Crash\(\) in .*\\tap\\tap\\t\\testexception.cs.notcs:line \d+$/
-/^       at TestException.Main\(\) in .*\\tap\\tap\\t\\testexception.cs.notcs:line \d+$/
+/^       at TestException.Crash\(\) in .*\\tap\\t\\testexception.cs.notcs:line \d+$/
+/^       at TestException.Main\(\) in .*\\tap\\t\\testexception.cs.notcs:line \d+$/
   ...
 # FAILED. 1/2 test passed (50%)
 #    Number of planned tests did not match number of tests.
@@ -1081,8 +1081,8 @@ ok 1
 not ok 2
 #   failed test 2 (in TestException.Crash)
 #   oops.
-/^#    at TestException.Crash\(\) in .*\\tap\\tap\\t\\testexception.cs.notcs:line \d+$/
-/^#    at TestException.Main\(\) in .*\\tap\\tap\\t\\testexception.cs.notcs:line \d+$/
+/^#    at TestException.Crash\(\) in .*\\tap\\t\\testexception.cs.notcs:line \d+$/
+/^#    at TestException.Main\(\) in .*\\tap\\t\\testexception.cs.notcs:line \d+$/
 # FAILED. 1/2 test passed (50%)
 #    Number of planned tests did not match number of tests.
 #    planned: 3 run: 2
@@ -1092,8 +1092,8 @@ not ok 2
 ok 1
 not ok 2
 T2 : oops.
-/^     at TestException.Crash\(\) in .*\\tap\\tap\\t\\testexception.cs.notcs:line \d+$/
-/^     at TestException.Main\(\) in .*\\tap\\tap\\t\\testexception.cs.notcs:line \d+$/
+/^     at TestException.Crash\(\) in .*\\tap\\t\\testexception.cs.notcs:line \d+$/
+/^     at TestException.Main\(\) in .*\\tap\\t\\testexception.cs.notcs:line \d+$/
 # FAILED. 1/2 test passed (50%)
 #    Number of planned tests did not match number of tests.
 #    planned: 3 run: 2

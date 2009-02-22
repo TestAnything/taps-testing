@@ -30,6 +30,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("taps")]
+[assembly: AssemblyTitle("tap.exe")]
+[assembly: AssemblyCopyright("Copyright © 2009 Frank van Dijk")]
 
 namespace Taps {
 
