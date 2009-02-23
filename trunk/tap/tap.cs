@@ -394,6 +394,17 @@ namespace Taps {
             return filename;
         }
 
+        static StackFrame GetStackFrame() {
+            var st=new StackTrace(true);
+            Assembly thisass=typeof(TAP).Assembly;
+            for(int k=1;k<st.FrameCount;++k) {
+                var sf=st.GetFrame(k);
+                MethodBase meth=sf.GetMethod();
+                if(meth.DeclaringType.Assembly!=thisass) return sf;
+            }
+            throw new ApplicationException("tap: no calling stack frame found");
+        }
+
         static void WriteComment(CommentDictionaries dic,List<PathEntry> path,string name) {
             if(dic.Ext!=null) {
                 dic.Dic.Add("extensions",dic.Ext);
@@ -421,12 +432,12 @@ namespace Taps {
             WriteComment(dic,null,name);
         }
 
-        static bool ReportCommon(bool res,string name,object got,object expected,string cmp,StackFrame sf)  {
+        static bool ReportCommon(bool res,string name,object got,object expected,string cmp)  {
             using(new WithInvariantCulture()) {
                 lock(WriteLock) {
                     ReportOkness(name,res);
                     if(!res || Verbose>=4) {
-                        WriteIsComment(res,name,null,sf,got,expected,cmp);
+                        WriteIsComment(res,name,null,GetStackFrame(),got,expected,cmp);
                     }
                 }
             }
@@ -514,27 +525,27 @@ namespace Taps {
         }
 
         static public bool Ok(bool res,string name) {
-            return OkCommon(res,name,new StackFrame(1,true));
+            return OkCommon(res,name);
         }
         
         static public bool Ok(bool res) {
-            return OkCommon(res,null,new StackFrame(1,true));
+            return OkCommon(res,null);
         }
 
         static public bool Ok(Func<bool> del,string name) {
-            return OkCommon(del(),name,new StackFrame(1,true));
+            return OkCommon(del(),name);
         }
 
         static public bool Ok(Func<bool> del) {
-            return OkCommon(del(),null,new StackFrame(1,true));
+            return OkCommon(del(),null);
         }
         
-        static bool OkCommon(bool res,string name,StackFrame sf) {
+        static bool OkCommon(bool res,string name) {
             using(new WithInvariantCulture()) {
                 lock(WriteLock) {
                     ReportOkness(name,res);
                     if(!res || Verbose>=4) {
-                        WriteComment(MkCommentDic(res,name,null,sf),null,name);
+                        WriteComment(MkCommentDic(res,name,null,GetStackFrame()),null,name);
                     }
                 }
             }
@@ -543,34 +554,34 @@ namespace Taps {
         }
 
         static public bool Is<T>(T got,T expected,string name) {
-            return IsCommon(got,expected,name,false,new StackFrame(1,true));
+            return IsCommon(got,expected,name,false);
         }
 
         static public bool Is<T>(T got,T expected) {
-            return IsCommon(got,expected,null,false,new StackFrame(1,true));
+            return IsCommon(got,expected,null,false);
         }
 
         static public bool Isnt<T>(T got,T expected,string name) {
-            return IsCommon(got,expected,name,true,new StackFrame(1,true));
+            return IsCommon(got,expected,name,true);
         }
 
         static public bool Isnt<T>(T got,T expected) {
-            return IsCommon(got,expected,null,true,new StackFrame(1,true));
+            return IsCommon(got,expected,null,true);
         }
 
-        static bool IsCommon(object got,object expected,string name,bool not,StackFrame sf) {
-            return ReportCommon(object.Equals(got,expected)^not,name,got,expected,not?"!=":null,sf);
+        static bool IsCommon(object got,object expected,string name,bool not) {
+            return ReportCommon(object.Equals(got,expected)^not,name,got,expected,not?"!=":null);
         }
 
         static public bool IsDeeply(object got,object expected,string name) {
-            return IsDeeplyCommon(got,expected,name,new StackFrame(1,true));
+            return IsDeeplyCommon(got,expected,name);
         }
 
         static public bool IsDeeply(object got,object expected) {
-            return IsDeeplyCommon(got,expected,null,new StackFrame(1,true));
+            return IsDeeplyCommon(got,expected,null);
         }
 
-        static bool IsDeeplyCommon(object got,object expected,string name,StackFrame sf) {
+        static bool IsDeeplyCommon(object got,object expected,string name) {
             List<PathEntry> path;
             DeepCmp.Result res=new DeepCmp(BlackBoxTypes).Compare(got,expected,out path);
             bool bres=res==DeepCmp.Result.Eq;
@@ -578,7 +589,7 @@ namespace Taps {
                 lock(WriteLock) {
                     ReportOkness(name,bres);
                     if(!bres || Verbose>=4) {
-                        var comdic=MkCommentDic(bres,name,null,sf);
+                        var comdic=MkCommentDic(bres,name,null,GetStackFrame());
                         comdic.Add("actual",got);
                         comdic.Add("expected",expected);
                         WriteComment(comdic,path,name);
@@ -590,48 +601,48 @@ namespace Taps {
         }
 
         static public bool Like<T>(T got,string expected,string name) {
-            return LikeCommon<T>(got,new Regex(expected,RegexOptions.CultureInvariant),name,false,new StackFrame(1,true));
+            return LikeCommon<T>(got,new Regex(expected,RegexOptions.CultureInvariant),name,false);
         }
 
         static public bool Like<T>(T got,string expected) {
-            return LikeCommon<T>(got,new Regex(expected,RegexOptions.CultureInvariant),null,false,new StackFrame(1,true));
+            return LikeCommon<T>(got,new Regex(expected,RegexOptions.CultureInvariant),null,false);
         }
 
         static public bool Unlike<T>(T got,string expected,string name) {
-            return LikeCommon<T>(got,new Regex(expected,RegexOptions.CultureInvariant),name,true,new StackFrame(1,true));
+            return LikeCommon<T>(got,new Regex(expected,RegexOptions.CultureInvariant),name,true);
         }
 
         static public bool Unlike<T>(T got,string expected) {
-            return LikeCommon<T>(got,new Regex(expected,RegexOptions.CultureInvariant),null,true,new StackFrame(1,true));
+            return LikeCommon<T>(got,new Regex(expected,RegexOptions.CultureInvariant),null,true);
         }
 
         static public bool Like<T>(T got,Regex expected,string name) {
-            return LikeCommon<T>(got,expected,name,false,new StackFrame(1,true));
+            return LikeCommon<T>(got,expected,name,false);
         }
 
         static public bool Like<T>(T got,Regex expected) {
-            return LikeCommon<T>(got,expected,null,false,new StackFrame(1,true));
+            return LikeCommon<T>(got,expected,null,false);
         }
 
         static public bool Unlike<T>(T got,Regex expected,string name) {
-            return LikeCommon<T>(got,expected,name,true,new StackFrame(1,true));
+            return LikeCommon<T>(got,expected,name,true);
         }
 
         static public bool Unlike<T>(T got,Regex expected) {
-            return LikeCommon<T>(got,expected,null,true,new StackFrame(1,true));
+            return LikeCommon<T>(got,expected,null,true);
         }
 
-        static bool LikeCommon<T>(T got,Regex expected,string name,bool not,StackFrame sf) {
+        static bool LikeCommon<T>(T got,Regex expected,string name,bool not) {
             return ReportCommon((got!=null && expected.IsMatch(got.ToString()))^not,name,got,
-                                expected.ToString(),not?"!~":"=~",sf);
+                expected.ToString(),not?"!~":"=~");
         }
 
         static public bool CmpOk<T,U>(T got,Func<T,U,bool> cmp,U expected,string name) {
-            return CmpOkCommon(got,cmp,expected,name,new StackFrame(1,true));
+            return CmpOkCommon(got,cmp,expected,name);
         }
 
         static public bool CmpOk<T,U>(T got,Func<T,U,bool> cmp,U expected) {
-            return CmpOkCommon(got,cmp,expected,null,new StackFrame(1,true));            
+            return CmpOkCommon(got,cmp,expected,null);            
         }
 
         static string CmpName(Delegate cmp) {
@@ -639,16 +650,16 @@ namespace Taps {
             return string.Concat(meth.DeclaringType.FullName,".",meth.Name);
         }
         
-        static public bool CmpOkCommon<T,U>(T got,Func<T,U,bool> cmp,U expected,string name,StackFrame sf) {
-            return ReportCommon(cmp(got,expected),name,got,expected,CmpName(cmp),sf);
+        static public bool CmpOkCommon<T,U>(T got,Func<T,U,bool> cmp,U expected,string name) {
+            return ReportCommon(cmp(got,expected),name,got,expected,CmpName(cmp));
         }
 
         static public bool Pass(string name) {
-            return OkCommon(true,name,new StackFrame(1,true));
+            return OkCommon(true,name);
         }
 
         static public bool Fail(string name) {
-            return OkCommon(false,name,new StackFrame(1,true));
+            return OkCommon(false,name);
         }
 
         static public bool Diag(string fmt,params object[] ps) {
@@ -700,30 +711,30 @@ namespace Taps {
         }
 
         static public bool Except(Action f,Type exceptiontype,string name) {
-            return ExceptCommon(f,exceptiontype,null,name,new StackFrame(1,true));
+            return ExceptCommon(f,exceptiontype,null,name);
         }
 
         static public bool Except(Action f,Type exceptiontype) {
-            return ExceptCommon(f,exceptiontype,null,null,new StackFrame(1,true));
+            return ExceptCommon(f,exceptiontype,null,null);
         }
 
         static public bool Except(Action f,string errtext,string name) {
-            return ExceptCommon(f,null,errtext,name,new StackFrame(1,true));
+            return ExceptCommon(f,null,errtext,name);
         }
 
         static public bool Except(Action f,string errtext) {
-            return ExceptCommon(f,null,errtext,null,new StackFrame(1,true));
+            return ExceptCommon(f,null,errtext,null);
         }
 
         static public bool Except(Action f,Regex errtext,string name) {
-            return ExceptCommon(f,null,errtext,name,new StackFrame(1,true));
+            return ExceptCommon(f,null,errtext,name);
         }
 
         static public bool Except(Action f,Regex errtext) {
-            return ExceptCommon(f,null,errtext,null,new StackFrame(1,true));
+            return ExceptCommon(f,null,errtext,null);
         }
 
-        static bool ExceptCommon(Action f,Type exceptiontype,object errtext,string name,StackFrame sf) {
+        static bool ExceptCommon(Action f,Type exceptiontype,object errtext,string name) {
             Exception e=null;
             string msg=null;
             try {
@@ -737,20 +748,20 @@ namespace Taps {
                 if(e==null) {
                     lock(WriteLock) {
                         ReportNotOk(name);
-                        WriteComment(MkCommentDic(false,name,"expected exception but got none",sf),null,name);
+                        WriteComment(MkCommentDic(false,name,"expected exception but got none",GetStackFrame()),null,name);
                     }
                 } else {
                     string type=e.GetType().Name;
                     if(exceptiontype!=null && !(exceptiontype.IsInstanceOfType(e)))  {
                         lock(WriteLock) {
                             ReportNotOk(name);
-                            WriteIsComment(false,name,"the exception was not (a child) of the expected type",sf,type,exceptiontype.Name,null);
+                            WriteIsComment(false,name,"the exception was not (a child) of the expected type",GetStackFrame(),type,exceptiontype.Name,null);
                         }
                     } else if((errtext is string && (string)errtext!=msg)
                               || (errtext is Regex && !((Regex)errtext).IsMatch(msg))) {
                         lock(WriteLock) {
                             ReportNotOk(name);
-                            WriteIsComment(false,name,"the exception message did not match",sf,msg,errtext.ToString(),null);
+                            WriteIsComment(false,name,"the exception message did not match",GetStackFrame(),msg,errtext.ToString(),null);
                         }
                     }
                     else {
@@ -767,15 +778,15 @@ namespace Taps {
         }
 
         public static bool Isa(object o,Type t,string name) {
-            return IsaCommon(o,t,name,new StackFrame(1,true));
+            return IsaCommon(o,t,name);
         }
 
         public static bool Isa(object o,Type t) {
-            return IsaCommon(o,t,null,new StackFrame(1,true));
+            return IsaCommon(o,t,null);
         }
 
-        static bool IsaCommon(object o,Type t,string name,StackFrame sf) {
-            return ReportCommon(t.IsInstanceOfType(o),name,o.GetType().FullName,t.FullName,null,sf);
+        static bool IsaCommon(object o,Type t,string name) {
+            return ReportCommon(t.IsInstanceOfType(o),name,o.GetType().FullName,t.FullName,null);
         }
 
     }
