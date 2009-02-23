@@ -12,14 +12,22 @@ puts a copy of tap.exe in SystemRoot\System32 so it appears in the
 path. The installer adds an item 'Taps' in the start menu with links
 to the documentation and the uninstaller.
 
-If you want to compile Taps yourself you can do so by running make.pl
-in the tap/tap directory. Compiling Taps requires that the .NET
-framework v3.5 is installed on your system. To compile the
-documentation run make.pl in the tap/doc directory. Compiling the
-documentation requires xsltproc and docbook xsls; see
-docbook.sourceforge.net.
+If you want to compile Taps yourself you can do so by downloading the
+source distribution and running make.pl in the ./tap
+directory. Compiling Taps requires that the .NET framework v3.5 is
+installed on your system. Running make.pl requires Perl (e.g. from
+<www.activestate.com>).
+
+To compile the documentation run make.pl in the ./doc
+directory. Compiling the documentation requires xsltproc and docbook
+xsls; see docbook.sourceforge.net.
 
 Contact
 -------
 
-Questions ? Bugs ? taps.testing at gmail dot com.
+The project home is <http://code.google.com/p/taps-testing>.
+
+Questions ? You can contact the author, Frank van Dijk, at
+'taps.testing at gmail dot com'. Bugs ? Use the issue tracker at the
+project's google code page.
+
