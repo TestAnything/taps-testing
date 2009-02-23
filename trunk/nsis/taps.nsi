@@ -11,6 +11,7 @@ file ..\tap\tap.pdb
 file ..\COPYING
 file ..\COPYING.EXCEPTION
 file ..\TODO
+file ..\README
 writeUninstaller $INSTDIR\uninstall.exe
 createDirectory $SMPROGRAMS\Taps
 createShortCut "$SMPROGRAMS\Taps\Uninstall Taps.lnk" $INSTDIR\uninstall.exe

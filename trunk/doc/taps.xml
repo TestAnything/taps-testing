@@ -132,7 +132,7 @@ ok 1 - Hello, world
       </para>
       <para>
         In the unlikely case that you do distribute test scripts with
-        your software, the combined work of your Taps, your test
+        your software, the combined work of Taps, your test
         script, and your software would become subject to the
         GPL. This is not my intention. Therefore I have specified an
         exception to the GPL that allows you to distribute your own
@@ -821,6 +821,13 @@ ok 100 - thread 61 got element 54
       the result of a method <code>SomeFunc()</code> is 42, write
       <code>Is(SomeFunc(),42)</code>, not
       <code>Is(42,SomeFunc())</code>.
+    </para>
+    <para>
+      The test methods run in the current culture of the thread but
+      during the output of test results to stdout they switch to the
+      invariant culture. This means that you can switch cultures in
+      your test scripts without affecting the TAP output and without
+      risking confusing the TAP consumer.
     </para>
     <para>
       See also <xref linkend="apiref"/>.
