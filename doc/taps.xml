@@ -27,6 +27,11 @@ scripts; see the COPYING.EXCEPTION file for details.
   <chapter>
     <title>Introduction</title>
     <para>
+      You can find a recent copy of this document online at <link
+      xlink:href="http://www.fwvdijk.org/taps/taps.html">http://www.fwvdijk.org/taps/taps.html</link>. The
+      project home is <link xlink:href="http://code.google.com/p/taps-testing">http://code.google.com/p/taps-testing</link>.
+    </para>
+    <para>
       Taps is a test tool for the .NET framework. It is inspired on
       Perl's testing facilities and therefore quite different from the
       likes of tools like NUnit. Taps runs test scripts and expects
@@ -91,7 +96,7 @@ ok 1 - Hello, world
       </listitem>
       <listitem>
         <para>Supports testing of classes and methods that have the
-        <token>internal</token> access modifier.</para>
+        <code>internal</code> access modifier.</para>
       </listitem>
       <listitem>
         <para>Output readable by TAP consumers.</para>
@@ -263,10 +268,10 @@ tap -s:out t/foo.cs t/somemore</screen>
         can help solve this problem. With the
         InternalsVisibleToAttribute an assembly can allow assemblies
         with specific names to access classes and methods that are
-        implicitly or explicitly declared internal. All test scripts
-        compiled by <filename>tap.exe</filename> happen to be named "taps". If you add the
-        following declaration to one of the source files of your
-        project:
+        implicitly or explicitly declared <code>internal</code>. All
+        test scripts compiled by <filename>tap.exe</filename> happen
+        to be named "taps". If you add the following declaration to
+        one of the source files of your project:
         <screen>
 [assembly: InternalsVisibleTo("taps")]</screen>
         all your internals are visible to your test scripts. If you
@@ -1148,25 +1153,35 @@ cd $(ProjectDir) &amp;&amp; tap -s:$(OutDir) -f:vs
       </para>
     </section>
     <section>
-      <title>TAP::Harness</title>
+      <title>Test-Harness</title>
       <para>
         <link
-        xlink:href="http://search.cpan.org/~andya/Test-Harness-3.14/lib/Test/Harness.pm">TAP::Harness</link>
-        is an example of a TAP consumer. It is a Perl module that runs
-        test scripts, consumes TAP output and displays
-        statistics. <filename>tapharness.pl</filename> in the Taps
-        distribution is a Perl script that uses TAP::Harness to run
-        tests through <filename>tap.exe</filename>. To run the tests
-        in <filename>samples/simple</filename> project, type:
-        <userinput>
-          perl ..\..\tap\tapharness.pl t\*.cs
-        </userinput>
-        TAP::Harness shows a nice progress indicator for long-running
-        tests suites. It defeats the <option>-p</option> command line
-        option because it runs <filename>tap.exe</filename> for each
-        test script, but luckily it has its own parallel test
-        feature. <filename>tapharness.pl</filename> sets the
-        parallelism level to 4 by default.
+        xlink:href="http://search.cpan.org/~andya/Test-Harness">Test-Harness</link>
+        is an example of a TAP consumer. It runs test scripts,
+        consumes TAP output and displays statistics. The Test-Harness
+        distribution comes with a command line tool called
+        <filename>prove</filename> that you can use to run Taps
+        tests. You need a 3.x version - I tested with 3.14. To run
+        <filename>prove</filename> in the
+        <filename>samples/simple</filename> project, type:
+        <screen>prove -e "tap -z" t/*.cs</screen>
+        Prove shows a nice progress indicator for long-running test
+        suites and has a number of other interesting features. It
+        defeats <filename>tap.exe</filename>'s <option>-p</option>
+        command line option because it runs
+        <filename>tap.exe</filename> for each test script, but luckily
+        it has its own parallel test feature: just add a
+        <option>-j</option> <emphasis>n</emphasis> switch to the
+        command line.
+      </para>
+      <para>
+        Instead of using <filename>prove</filename> you can write a
+        Perl script that uses the TAP::Harness module provided by
+        Test-Harness to run tests through
+        <filename>tap.exe</filename>. An example of such a script is
+        in <filename>.\tap\tapharness.pl</filename>. To use it to run
+        the tests in the <filename>samples/simple</filename> project,
+        type: <screen>perl ..\..\tap\tapharness.pl t\*.cs</screen>
       </para>
     </section>
   </chapter>
@@ -1667,7 +1682,7 @@ ok 4</screen>
           the object graph more than once.
         </para>
         <para>
-          IsDeeply() reports failure if finds values that don't
+          IsDeeply() reports failure if it finds values that don't
           compare equal, keys that don't compare equal, field names
           that don't compare equal or lengths of enumerables,
           dictionaries and field lists that don't compare
