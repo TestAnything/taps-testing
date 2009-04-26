@@ -38,10 +38,23 @@ namespace Taps {
 
     public class TAPApp {
 
+#if __MonoCS__
+        public static string PdbFromExe(string exe)  {
+            return exe+".mdb";
+        }
+#else
+
+        static Regex MaybeExe=new Regex(@"(?:\.exe)?$",RegexOptions.IgnoreCase|RegexOptions.CultureInvariant);
+        
+        public static string PdbFromExe(string exe)  {
+            return MaybeExe.Replace(exe,".pdb",1);
+        }
+#endif
+
         public static TextWriter Out=Console.Out;
 
         public static List<string> Paths=new List<string>();
-        public static string Subject="bin\\Debug";
+        public static string Subject="bin/Debug";
         public static List<string> Refs=new List<string>();
         
         internal static string TapPwd=Directory.GetCurrentDirectory();
@@ -77,6 +90,14 @@ namespace Taps {
                 string pfix=string.Format("## {0:O} {1} ",DateTime.UtcNow,Thread.CurrentThread.ManagedThreadId);
                 ELog(pfix+s,ps);
             }
+        }
+
+        public static string FixPathSep(string path) {
+            char sep=Path.DirectorySeparatorChar;
+            if(sep=='/') {
+                return path.Replace('\\',sep);
+            }
+            return path.Replace('/',sep);
         }
 
         static void WriteTemplate(string name) {
@@ -218,6 +239,7 @@ There is NO WARRANTY, to the extent permitted by law.
                     Paths.Add(i);
                 }
             }
+            Subject=TAPApp.FixPathSep(Subject);
         }
 
         internal static bool IsOutdated(string obj,string src) {
@@ -251,12 +273,10 @@ There is NO WARRANTY, to the extent permitted by law.
         public string Path;
         public string Basepath;
 
-        static Regex NonEmptyWithoutBSlash=new Regex(@"[^\\]$");
-
         public ScriptPath(string path,string basepath) {
             Path=path;
-            if(basepath!=null && NonEmptyWithoutBSlash.IsMatch(basepath)) {
-                basepath+="\\";
+            if(basepath!=null && basepath.LastOrDefault()!=System.IO.Path.DirectorySeparatorChar) {
+                basepath+=System.IO.Path.DirectorySeparatorChar;
             }
             Basepath=basepath;
         }
@@ -290,8 +310,8 @@ There is NO WARRANTY, to the extent permitted by law.
                 TAPApp.VLog(2,"copy from {0} to {1}",me,to);
                 File.Copy(me,to,true);
                 // this can be removed once all the bugs are fixed :-)
-                string pdb=Regex.Replace(me,@"\.exe$",".pdb");
-                string pdbto=Regex.Replace(to,@"\.exe$",".pdb");
+                string pdb=TAPApp.PdbFromExe(me);
+                string pdbto=TAPApp.PdbFromExe(to);
                 File.Copy(pdb,pdbto,true);
                 return true;
             }
@@ -312,7 +332,7 @@ There is NO WARRANTY, to the extent permitted by law.
             return Directory.GetFiles(path,"*.cs",SearchOption.AllDirectories).Select(x=>new ScriptPath(x,path));
         }
 
-        static IEnumerable<ScriptPath> GetByWildcard(string pw) {
+        internal static IEnumerable<ScriptPath> GetByWildcard(string pw) {
             var path=Path.GetDirectoryName(pw);
             if(string.IsNullOrEmpty(path)) path=".";
             return Directory.GetFiles(path,Path.GetFileName(pw),SearchOption.TopDirectoryOnly).Select(x=>new ScriptPath(x,path));
@@ -322,7 +342,7 @@ There is NO WARRANTY, to the extent permitted by law.
             if(paths.Count==0)  {
                 return Directory.GetFiles("t","*.cs",SearchOption.AllDirectories).Select(x=>new ScriptPath(x,"t"));
             } else {
-                return from i in paths.Select(x=>x.Replace('/','\\'))
+                return from i in paths.Select(x=>TAPApp.FixPathSep(x))
                     from j in Directory.Exists(i)?GetScriptsInPath(i):GetByWildcard(i)
                     select j;
             }
@@ -330,7 +350,7 @@ There is NO WARRANTY, to the extent permitted by law.
 
         internal void CompileAndRun(IEnumerable<ScriptPath> srcs) {
             TapWasUpdated=CopyMe(TAPApp.Subject);
-            using(TaskMgr tm=new TaskMgr(TAPApp.MaxTasks,this)) {
+            using(TaskMgr tm=new TaskMgr(this)) {
                 tm.Run(srcs.ToArray());
             }
         }

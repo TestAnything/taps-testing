@@ -30,11 +30,12 @@ class MismatchTest: TAP {
         Plan(4);
         var paths=new string[] {"t\\12many.cs.notcs","t\\12few.cs.notcs"};
         var sw=new StringWriter();
+        sw.NewLine="\r\n";
         TAPApp.Out=sw;
         TAPApp.Subject="u";
         try {
             TAPRunner r=new TAPRunner();
-            r.CompileAndRun(paths.Select(x=>new ScriptPath(x,null)));
+            r.CompileAndRun(paths.Select(x=>new ScriptPath(TAPApp.FixPathSep(x),null)));
             var cs=TAPParser.Total;
             Is(cs.NPlanned,2);
             Is(cs.NOk,2);
