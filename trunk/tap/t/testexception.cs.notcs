@@ -25,6 +25,7 @@ using System;
 class TestException: TAP  {
 
     static int Crash() {
+        VDiag(1000,"Mono needs something to happen before the throw to get the stack trace right");
         #pragma warning disable 162
         throw new ApplicationException("oops.");
         return 1;

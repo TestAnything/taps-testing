@@ -32,6 +32,8 @@ class YAMLWalkerTest: TAP {
         return 0;
     }
 
+#pragma warning disable 414
+
     class Fields {
         public enum Numbers {zero,one,two,three} 
         int a=1;

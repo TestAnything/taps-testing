@@ -82,13 +82,26 @@ class YAMLWriterTest: TAP {
         return w.Write(o).ToString();
     }
 
+    string ToLocalEOL(string s) {
+        string localeol=new StringWriter().NewLine;
+        // this assumes the .cs file has \r\n and that the compiler
+        // doesn't convert that to the platform default for @ strings.
+        return s.Replace("\r\n",localeol)
+            // yamlwriter terminates lines according to the stream's
+            // NewLine property. But if the <CR> and/or <LF> is part of
+            // the string it is outputting, it outputs exactly what's in the string.
+            // therefore use <CR> and <LF> in the 'expected' string if we
+            // really want a \r or \n,
+            .Replace("<CR>","\r").Replace("<LF>","\n");
+    }
+
     string YString(string s,params int[] ps) {
         string d="";
         if(ps!=null && ps.Length!=0) d=new string(' ',ps[0]);
-        return string.Concat(d,@"---
+        return ToLocalEOL(string.Concat(d,@"---
 ",s,@"
 ",d,@"...
-");
+"));
     }
 
     void TestEscape() {
@@ -105,7 +118,7 @@ class YAMLWriterTest: TAP {
         Is(RunWriter(0,"a\u0085b"),YString("|2\r\n  a\u0085  b"));
         Is(RunWriter(0,"\0hi!"),YString("\"\\0hi!\""));
         Is(RunWriter(0,"hi\nthere!"),YString("|2\r\n  hi\n  there!"));
-        Is(RunWriter(0,"hi\rthere!\r\n"),YString("|2\r\n  hi\r  there!\r\n"));
+        Is(RunWriter(0,"hi\rthere!\r\n"),YString("|2\r\n  hi<CR>  there!<CR>\n"));
         Is(RunWriter(0,'\t'),YString("\"\\t\""));
         Is(RunWriter(0,'\n'),YString("|2\r\n  \n"));
         Is(RunWriter(0,null),YString("~"));
@@ -130,8 +143,7 @@ class YAMLWriterTest: TAP {
         Is(RunWriter(0,sdic),YString("a:      "+lng+@"
 c:      d
 ""e\tt"": |2
-  f
-  g"));
+  f<CR><LF>  g"));
         // we always tostring() keys for now. "? : " yaml syntax not implemented yet
         var adic=new Dictionary<A,string>{{new A(3,4),"a"}};
         Is(RunWriter(0,adic),YString("{YAMLWriterTest+A: a}"));
@@ -208,8 +220,10 @@ Dic: "+
 
     void TestRE() {
         // a regex is a pretty deep graph with Pointers, It had better be caught by the default BBD
-        Regex re=new Regex("1");
-        Like(RunWriter(0,re),new Regex(@"\bSystem\.Reflection\.Pointer\b"));
+        Skip("depends on .net internals",1,()=>VM==".net",()=>{
+                Regex re=new Regex("1");
+                Like(RunWriter(0,re),new Regex(@"\bSystem\.Reflection\.Pointer\b"));
+            });
     }
 
     string Annotator(int i,YNode n) {

@@ -39,6 +39,7 @@ class CmpAnnoTest: TAP {
         dc.Compare(l,r,out path);
         //        Dump("path",path);
         var sw=new StringWriter();
+        sw.NewLine="\r\n";
         var cw=new YAMLCommentWriter(sw,null);
         var dic=new OrderedDictionary{{"a","blah"},{"actual",l},{"expected",r}};
         cw.WriteComment(0,dic,path,null);

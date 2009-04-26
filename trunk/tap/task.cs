@@ -64,13 +64,13 @@ namespace Taps {
 
         static string TapFromSource(ScriptPath s) {
             string rel=s.GetRelativePart();
-            rel=rel.Replace('\\','_');
+            rel=rel.Replace(Path.DirectorySeparatorChar,'_');
             return Path.Combine(TAPApp.Subject,ExtEx.Replace(rel,m=>
                                                                     string.Concat("taps.",m.Groups[1].Value.Replace(".","")),1));
         }
 
-        static string PdbFromTap(string exe) {
-            return Regex.Replace(exe,@"$",".pdb",RegexOptions.IgnoreCase);
+        static string PdbFromTap(string tap) {
+            return TAPApp.PdbFromExe(tap);
         }
 
         void Buffer(bool error,bool force,string s) {
@@ -122,7 +122,12 @@ namespace Taps {
         public int Run(string path) {
             using(Process proc=new Process()) {
                 var startInfo=new ProcessStartInfo();
+#if __MonoCS__
+                startInfo.FileName="mono";
+                startInfo.Arguments="--debug "+path;
+#else
                 startInfo.FileName=path;
+#endif
                 startInfo.CreateNoWindow=true;
                 startInfo.UseShellExecute=false;
                 startInfo.RedirectStandardOutput = true;
@@ -186,7 +191,11 @@ namespace Taps {
                 cp.IncludeDebugInformation=true;
                 cp.OutputAssembly=outpath;
                 //cp.CompilerOptions+=String.Concat("/d:DEBUG /lib:\"",GetMyImagePath(),"\"");
-                cp.CompilerOptions+=string.Concat("/d:DEBUG /pdb:"+pdbpath);
+#if __MonoCS__
+                cp.CompilerOptions+="/d:DEBUG /nowarn:169";
+#else
+                cp.CompilerOptions+=string.Concat("/d:DEBUG /pdb:",pdbpath);
+#endif                
                 cp.ReferencedAssemblies.Add("System.dll");
                 cp.ReferencedAssemblies.Add("System.Core.dll");
 

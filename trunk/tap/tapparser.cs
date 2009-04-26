@@ -48,7 +48,6 @@ namespace Taps {
             public int Show() {
                 int all=NOk+NNotOk;
                 int exit=1;
-                string tests=NOk==1?"test":"tests";
                 string scripts=NScripts==1?"script":"scripts";
                 if(!FirstLine && !Mismatch && NNotOk==0 && NRunFailed==0) {
                     TAPApp.Log("# all OK. ({0} {1})",NOk,TestTests(NOk));

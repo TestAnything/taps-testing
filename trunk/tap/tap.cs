@@ -97,6 +97,15 @@ namespace Taps {
             return null;
         }
 
+        protected static string MkCoords(OrderedDictionary dic) {
+            string s=dic["line"].ToString();
+            object t=dic["column"];
+            if(t!=null) {
+                return string.Concat(s,",",t.ToString());
+            }
+            return s;
+        }
+
     }
 
     public class YAMLCommentWriter: CommentWriter {
@@ -144,7 +153,7 @@ namespace Taps {
             Tw.Write("#   failed test {0} (",nr);
             var filename=(string)dic["file"];
             if(filename!=null) {
-                Tw.Write("{0} at pos {1},{2} ",filename,dic["line"],dic["column"]);
+                Tw.Write("{0} at pos {1} ",filename,MkCoords(dic));
             }
             Tw.WriteLine("in {0})",dic["method"]);
         }
@@ -217,7 +226,7 @@ namespace Taps {
             if(name==null) name=""; else name+=". ";
             string todo=TAP.InTodo!=null?"(todo) ":"";
             if(filename!=null) {
-                Tw.Write("{0}({1},{2}): warning T{3}: {4}{5}",filename,dic["line"],dic["column"],nr,name,todo);
+                Tw.Write("{0}({1}): warning T{2}: {3}{4}",filename,MkCoords(dic),nr,name,todo);
             } else {
                 Tw.Write("T{0} : {1}{2}",nr,name,todo);
             }
@@ -293,7 +302,6 @@ namespace Taps {
     
     public class TAP {
 
-        static int Tests;
         static int Cur;
         static object WriteLock=new object();
         [ThreadStatic] static Stopwatch Stopwatch;
@@ -349,6 +357,15 @@ namespace Taps {
             }
         }
 
+        public static string VM {
+            get {
+                if(Type.GetType("Mono.Runtime")!=null) {
+                    return "mono";
+                }
+                return ".net";
+            }
+        }
+
         static void ReportOkness(string name,bool ok) {
             TimeSpan time=TimeSpan.MinValue;
             if(Stopwatch!=null) time=Stopwatch.Elapsed;
@@ -387,7 +404,8 @@ namespace Taps {
                 here=Directory.GetCurrentDirectory();
             }
             Path.GetFullPath(here);
-            if(!here.EndsWith("\\")) here+="\\";
+            string sep=Path.DirectorySeparatorChar.ToString();
+            if(!here.EndsWith(sep)) here+=sep;
             if(filename.StartsWith(here,StringComparison.OrdinalIgnoreCase)) {
                 return filename.Substring(here.Length);
             }
@@ -445,10 +463,6 @@ namespace Taps {
             return res;
         }
 
-        static void AddExtension(CommentDictionaries dic,string key,object val) {
-            dic.AddExtension(key,val);
-        }
-
         static CommentDictionaries MkCommentDic(bool result,string name,string msg,StackFrame sf) {
             var dic=new CommentDictionaries();
             if(msg!=null) dic.Add("message",msg);
@@ -465,7 +479,7 @@ namespace Taps {
                 var line=sf.GetFileLineNumber();
                 dic.Add("line",line);
                 var col=sf.GetFileColumnNumber();
-                dic.Add("column",col);
+                if(col>0) dic.Add("column",col);
             }
             //if(name!=null) dic.Add("name",name);
             dic.Add("method",string.Format("{0}.{1}",meth.DeclaringType.FullName,meth.Name));
@@ -511,7 +525,6 @@ namespace Taps {
         }
 
         static public void Plan(int tests) {
-            Tests=tests;
             using(new WithInvariantCulture()) {
                 Console.WriteLine("1..{0}",tests);
             }

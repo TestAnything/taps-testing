@@ -34,16 +34,13 @@ namespace Taps {
 
     class TaskMgr: IDisposable {
 
-        int MaxTasks;
-
         Queue<Task> Tasks=new Queue<Task>();
 
         TaskMgrClient Client;
 
         AutoResetEvent TaskDone=new AutoResetEvent(false);
 
-        public TaskMgr(int maxtasks,TaskMgrClient client) {
-            MaxTasks=maxtasks;
+        public TaskMgr(TaskMgrClient client) {
             Client=client;
         }
 

@@ -37,7 +37,7 @@ class CmpWalkerTest: TAP {
         return cw.IsLeafType(o,o.GetType());
     }
 
-#pragma warning disable 659
+#pragma warning disable 649,659
     
     class Leaf {
         public int A;
