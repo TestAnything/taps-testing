@@ -3,24 +3,55 @@ testing facilities and therefore quite different from the likes of
 tools like NUnit. tap.exe runs test scripts and expects to see output
 that conforms to the TAP protocol on their stdouts.
 
-Installation
-------------
+Taps requires .NET to be installed on Windows and Mono to be installed
+on Unix.
 
-You can install Taps using the binary installer. The binary installer
-installs Taps with documentation and samples in ProgramFiles/Taps and
-puts a copy of tap.exe in SystemRoot\System32 so it appears in the
-path. The installer adds an item 'Taps' in the start menu with links
-to the documentation and the uninstaller.
+Installation - Windows
+----------------------
+
+You can install Taps in Windows using the binary installer. The binary
+installer installs Taps with documentation and samples in
+ProgramFiles/Taps and puts a copy of tap.exe in SystemRoot\System32 so
+it appears in the path. The installer adds an item 'Taps' in the start
+menu with links to the documentation and the uninstaller.
+
+Installation - Unix
+-------------------
+
+You can install Taps on Unix by extracting the taps-bin-unix.tar.gz in
+the right location. taps-bin-unix.tar.gz contains a bin, lib and share
+dir. The place where you extract taps-bin-unix.tar.gz should have an
+overlapping bin dir that is in your path. For example, if your system
+has an /opt/local/bin, and it is in your path, you could extract as
+follows:
+
+  tar -xzf taps-bin-unix.tar.gz -C /opt/local
+
+You need admin rights to do that. If the archive magically got
+gunzipped during download, use -xf instead of -xzf.
+
+If you don't have an /opt/local, other places that may be appropriate
+for your system may be /usr/local, /usr, or /.
+
+This installs a command 'tap' in your path. You can verify that it
+works by entering 'tap -h' on the command line. Documentation and
+samples are installed in <installroot>/share/doc/taps-testing.
+
+Compilation
+-----------
 
 If you want to compile Taps yourself you can do so by downloading the
 source distribution and running make.pl in the ./tap
 directory. Compiling Taps requires that the .NET framework v3.5 is
-installed on your system. Running make.pl requires Perl (e.g. from
-<www.activestate.com>).
+installed on your Windows system, or Mono 2.4 (older 2.x version may
+work too) on your Unix system. Running make.pl requires Perl
+(e.g. from <www.activestate.com>). For .NET on Windows, run "perl
+make.pl". For Mono on Unix, run "perl make.pl mono".
 
 To compile the documentation run make.pl in the ./doc
 directory. Compiling the documentation requires xsltproc and docbook
-xsls; see docbook.sourceforge.net.
+xsls; see docbook.sourceforge.net. For .NET on Windows, run "perl
+make.pl". For Mono on Unix, run "perl make.pl mono".
 
 Contact
 -------
