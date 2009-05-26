@@ -18,6 +18,10 @@ menu with links to the documentation and the uninstaller.
 Installation - Unix
 -------------------
 
+To install on Unix, download taps-unix-install.tar.gz and extract
+it. taps-unix-install.tar.gz contains this README and an archive
+called taps-bin-unix.tar.gz.
+
 You can install Taps on Unix by extracting the taps-bin-unix.tar.gz in
 the right location. taps-bin-unix.tar.gz contains a bin, lib and share
 dir. The place where you extract taps-bin-unix.tar.gz should have an
