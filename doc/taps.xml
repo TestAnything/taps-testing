@@ -32,11 +32,11 @@ scripts; see the COPYING.EXCEPTION file for details.
       project home is <link xlink:href="http://code.google.com/p/taps-testing">http://code.google.com/p/taps-testing</link>.
     </para>
     <para>
-      Taps is a test tool for the .NET framework. It is inspired on
-      Perl's testing facilities and therefore quite different from the
-      likes of tools like NUnit. Taps runs test scripts and expects
-      to see output that conforms to <link
-      xlink:href="http://search.cpan.org/~petdance/TAP-1.00/TAP.pm">the
+      Taps is a test tool for the .NET framework and Mono. It is
+      inspired on Perl's testing facilities and therefore quite
+      different from the likes of tools like NUnit. Taps runs test
+      scripts and expects to see output that conforms
+      to <link xlink:href="http://search.cpan.org/~petdance/TAP-1.00/TAP.pm">the
       TAP protocol</link> on their stdouts. Test scripts use the TAP
       class to run tests that generate the expected output. Here is a
       minimal test script:
@@ -264,8 +264,8 @@ tap -s:out t/foo.cs t/somemore</screen>
       application it tests, making it hard to test internals directly.
       </para>
       <para>
-        The .NET framework defines an InternalsVisibleToAttribute that
-        can help solve this problem. With the
+        The .NET/Mono framework defines an InternalsVisibleToAttribute
+        that can help solve this problem. With the
         InternalsVisibleToAttribute an assembly can allow assemblies
         with specific names to access classes and methods that are
         implicitly or explicitly declared <code>internal</code>. All
@@ -335,8 +335,14 @@ tap -s:out t/foo.cs t/somemore</screen>
         <screen>
 call "%VS90COMNTOOLS%/vsvars32.bat"
 msbuild</screen>
-        The program should compile with no problem. After the
-        compilation step the tests are run. The
+        If you're using Mono on Unix, you could use MonoDevelop to
+        build the project, or do something like
+        <screen>
+gmcs -debug Program.cs Properties/AssemblyInfo.cs -out:bin/Debug/simple.exe
+        </screen>
+        The program should compile with no problem. If you're using
+        Visual Studio or msbuild, the tests are run after the
+        compilation step completes. The
         <filename>tap.exe</filename> tool supports several output
         modes. The <filename>tap.exe</filename> command line in the
         project file specifies that the output should be "vs". The
@@ -425,10 +431,11 @@ t\a.cs(14,9): warning T3: apples and oranges. actual not as expected
       <para>
         The test scripts don't have to be run in a post-build
         event. You can run them separately. For example, if you run
-        the tap command without any options from the simple directory
-        then the tests are run. The output is slightly different, because
-        this time the default output format used. The difference is in
-        the details following a "not ok" report. For example, test 3
+        the tap command without any options from
+        the <filename>simple</filename> directory then the tests are
+        run. The output is slightly different, because this time the
+        default output format is used. The difference is in the details
+        following a "not ok" report. For example, test 3
         in <filename>a.cs</filename> now looks like this:
         <screen>
 not ok 3 - apples and oranges
@@ -627,7 +634,7 @@ class SallyTest: TAP {
       Test". Using <code>Autorun()</code> you can organize the tests
       in your scripts in methods. After the <code>Autorun()</code>
       call the template contains a sample call to the simplest test
-      method. <code>Ok()</code> takes a boolean parameter, succeeds
+      method. <code>Ok()</code> takes a boolean parameter and succeeds
       if it is true and fails if it is false.
     </para>
     <para>
@@ -1120,6 +1127,15 @@ column:\\s-+\\(.*\\)" 1 2 3) compilation-error-regexp-alist)
         addition to the usual compiler errors using
         <code>next-error</code>, bound to <code>C-x `</code> and maybe
         <code>M-g n</code> and others.
+      </para>
+      <para>
+          Mono's debug info doesn't give us column numbers, so for Mono use the following:
+        <programlisting>
+; for yaml format
+(push '("^  file:\\s-+\\(.*\\)\n  line:\\s-+\\(.*\\)" 1 2) compilation-error-regexp-alist)
+; for terse format
+(push '("(\\(.*\\) at pos \\([0-9]+\\) in .*)$" 1 2) compilation-error-regexp-alist)
+        </programlisting>
       </para>
     </section>
     <section>
